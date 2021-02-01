@@ -409,9 +409,9 @@ namespace Proposal1
 
             Book bookToRemove = booksList[input - 1];
 
-            foreach (StockBalance stockBalance in GetStockBalances(db))
+            foreach (Book book1 in GetListOfBooks(db))
             {
-                if (stockBalance.Isbn == bookToRemove.Isbn13)
+                if (book1.Isbn13 == bookToRemove.Isbn13)
                 {
                     db.Remove(bookToRemove);
                     db.SaveChanges();
@@ -420,10 +420,46 @@ namespace Proposal1
             }
         }
 
-        static void DeleteAuthorFromDatabase(TBMContext db);
+        static void DeleteAuthorFromDatabase(TBMContext db)
         {
+            List<Author> authorsList = GetListOfAuthors(db);
+            int number;
+            int input;
 
-        }
+            do
+            {
+                number = 1;
+                Console.WriteLine("\nSelect an author from the list to remove:");
+                foreach (Author author in GetListOfAuthors(db))
+                {
+                    Console.WriteLine(String.Format("{0,3}", number++.ToString()) + ": \"" + author.FirstName + "\"" + author.LastName);
+                }
+                Console.Write("  > ");
+
+                try
+                {
+                    input = int.Parse(Console.ReadLine().ToString());
+                }
+                catch (Exception)
+                {
+                    input = -1;
+                    Console.WriteLine("Error: Invalid option entered, please try again...");
+                }
+
+            } while (input < 1 || input > authorsList.Count);
+
+            Author authorToRemove = authorsList[input - 1];
+
+            foreach (Author author1 in GetListOfAuthors(db))
+            {
+                if (author1.FirstName == authorToRemove.FirstName && author1.LastName == authorToRemove.LastName)
+                {
+                    db.Remove(authorToRemove);
+                    db.SaveChanges();
+                    Console.WriteLine("Successfully deleted" + authorToRemove.FirstName + "\"" + authorToRemove.LastName);
+                }
+            }
+    }
 
         static List<Book> GetListOfBooks(TBMContext db)
         {
@@ -483,8 +519,19 @@ namespace Proposal1
             }
             return list;
         }
+
+        static List<Author> GetListOfAuthors(TBMContext db)
+        {
+            List<Author> list = new List<Author>();
+            foreach (var item in db.Authors.ToList())
+            {
+                list.Add(item);
+            }
+            return list;
+        }
     }
-   
+}
+
 
 
 
