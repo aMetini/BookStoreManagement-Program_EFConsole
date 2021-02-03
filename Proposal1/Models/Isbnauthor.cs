@@ -10,7 +10,7 @@ namespace Proposal1
         public long Isbn { get; set; }
         public int AuthorId { get; set; }
 
-        public virtual Author Author { get; set; }
+        public virtual Book Author { get; set; }
         public virtual Book IsbnNavigation { get; set; }
     }
 }

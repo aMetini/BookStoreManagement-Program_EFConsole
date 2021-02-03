@@ -76,11 +76,11 @@ namespace Proposal1
             Console.WriteLine("  4: Add Book to Store's Stock Balance");
             Console.WriteLine("  5: Remove Book from Store's Stock Balance");
             Console.WriteLine("  6: Add New Book to Database");
-            Console.WriteLine("  7: Add New Author to Database");
+            Console.WriteLine("  7: Add New Book to Database");
             Console.WriteLine("  8: Edit Existing Book Details in Database");
-            Console.WriteLine("  9: Edit Existing Author Details in Database");
+            Console.WriteLine("  9: Edit Existing Book Details in Database");
             Console.WriteLine(" 10: Delete Existing Book from Database");
-            Console.WriteLine(" 11: Delete Existing Author from Database");
+            Console.WriteLine(" 11: Delete Existing Book from Database");
             Console.Write("  > ");
         }
 
@@ -302,49 +302,36 @@ namespace Proposal1
                 }
             }
 
-        }
 
         static void AddNewBookToDatabase(TBMContext db)
         {
             var BookInput = new string[6];
-            var BookAuthorInput = new string[3];
-            string[] PrintMessages = new string[] { "Please add ISBN: \"", "Please add Title: \"", "Please add Language: \"", "Please add Price: \"", "Please add Release Date: \"", "Please add Publisher: \"" };
-            string[] PrintAuthorMessage = new string[] { "Please add First Name: \"", "Please add Last Name: \"", "Please add Date of Birth: \"" };
+            string[] PrintMessages = new string[] { "Please add ISBN: ", "Please add Title: ", "Please add Language: ", "Please add Price: ", "Please add Release Date: ", "Please add Publisher: " };
+
 
             for (int i = 0; i < PrintMessages.Length; i++)
             {
-                Console.WriteLine(PrintMessages[i]);
+                Console.Write(PrintMessages[i]);
 
                 BookInput[i] = Console.ReadLine();
-            }
-
-            for (int i = 0; i < PrintAuthorMessage.Length; i++)
-            {
-                Console.WriteLine(PrintAuthorMessage[i]);
-
-                BookAuthorInput[i] = Console.ReadLine();
             }
 
             var newBook = new Book()
             {
                 Isbn13 = long.Parse(BookInput[0]),
-                Title = BookInput[1]
-            };
-
-            var newAuthor = new Author()
-            {
-                FirstName = BookAuthorInput[0],
-                LastName = BookAuthorInput[1],
-                Dob = DateTime.Parse(BookAuthorInput[1])
+                Title = BookInput[1],
+                Language = BookInput[2],
+                Price = decimal.Parse(BookInput[3]),
+                ReleaseDate = DateTime.Parse(BookInput[4]),
+                Publisher = BookInput[5]
             };
 
 
             db.Books.Add(newBook);
-            db.Authors.Add(newAuthor);
             db.SaveChanges();
             Console.WriteLine("Added new book in Books database successfully!");
-
         }
+
         static void AddNewAuthorToDatabase(TBMContext db)
         {
             var BookAuthorInput = new string[3];
@@ -367,16 +354,161 @@ namespace Proposal1
             db.Authors.Add(newAuthor);
             db.SaveChanges();
             Console.WriteLine("Added new author in Authors database successfully!");
+
         }
 
         static void EditBookDetailsInDatabase(TBMContext db)
         {
+            List<Book> booksList = GetListOfBooks(db);
+            int number;
+            int input;
 
+            do
+            {
+                number = 1;
+                Console.WriteLine("\nSelect a book from the list to edit:");
+                foreach (Book book in booksList)
+                {
+                    Console.WriteLine(String.Format("{0,3}", number++.ToString()) + ": \"" + book.Title + "\" (" + book.Isbn13 + ")");
+                }
+                Console.Write("  > ");
+
+                try
+                {
+                    input = int.Parse(Console.ReadLine().ToString());
+                }
+                catch (Exception)
+                {
+                    input = -1;
+                    Console.WriteLine("Error: Invalid option entered, please try again...");
+                }
+
+            } while (input < 1 || input > booksList.Count);
+
+            Book bookToEdit = booksList[input - 1];
+
+            foreach (Book book1 in booksList)
+            {
+                if (book1.Isbn13 == bookToEdit.Isbn13)
+                {
+                    string[] PrintMessages = new string[] { "Please add ISBN: ", "Please add Title: ", "Please add Language: ", "Please add Price: ", "Please add Release Date: ", "Please add Publisher: " };
+                    Console.WriteLine("Enter new values or a blank line to retain existing value...");
+
+                    Console.Write("Title (" + book1.Title + "): ");
+                    string Response = Console.ReadLine();
+
+                    if (!Response.Equals(""))
+                    {
+                        book1.Title = Response;
+                    }
+
+                    Console.Write("Language (" + book1.Language + "): ");
+                    Response = Console.ReadLine();
+
+                    if (!Response.Equals(""))
+                    {
+                        book1.Language = Response;
+                    }
+
+                    Console.Write("Price (" + book1.Price + "): ");
+                    Response = Console.ReadLine();
+
+                    if (!Response.Equals(""))
+                    {
+                        book1.Price = decimal.Parse(Response);
+                    }
+
+                    Console.Write("Release Date (" + book1.ReleaseDate + "): ");
+                    Response = Console.ReadLine();
+
+                    if (!Response.Equals(""))
+                    {
+                        book1.ReleaseDate = DateTime.Parse(Response);
+                    }
+
+                    Console.Write("Publisher (" + book1.Publisher + "): ");
+                    Response = Console.ReadLine();
+
+                    if (!Response.Equals(""))
+                    {
+                        book1.Publisher = Response;
+                    }
+
+                    db.SaveChanges();
+                    Console.WriteLine("Successfully edited \"" + bookToEdit.Title + "\" (" + bookToEdit.Isbn13 + ")");
+                    break;
+                }
+            }
         }
 
         static void EditAuthorDetailsInDatabase(TBMContext db)
         {
+            List<Author> authorsList = GetListOfAuthors(db);
+            int number;
+            int input;
 
+            do
+            {
+                number = 1;
+                Console.WriteLine("\nSelect an author from the list to edit:");
+                foreach (Author author in authorsList)
+                {
+                    Console.WriteLine(String.Format("{0,3}", number++.ToString()) + ": \"" + author.FirstName + "\" (" + author.LastName + ")");
+                }
+                Console.Write("  > ");
+
+                try
+                {
+                    input = int.Parse(Console.ReadLine().ToString());
+                }
+                catch (Exception)
+                {
+                    input = -1;
+                    Console.WriteLine("Error: Invalid option entered, please try again...");
+                }
+
+            } while (input < 1 || input > authorsList.Count);
+
+            Author authorToEdit = authorsList[input - 1];
+
+            foreach (Author author in authorsList)
+            {
+                if (author.FirstName == authorToEdit.FirstName)
+                {
+                    string[] PrintMessages = new string[] { "Please add First Name: ", "Please add Last Name: ", "Please add Date of Birth: " };
+                    Console.WriteLine("Enter new values or press 'Enter' to skip over and existing value...");
+
+                    Console.Write("First Name (" + author.FirstName + "): ");
+                    string Response = Console.ReadLine();
+
+                    if (!Response.Equals(""))
+                    {
+                        author.FirstName = Response;
+                    }
+
+                    Console.Write("Last Name (" + author.LastName + "): ");
+                    Response = Console.ReadLine();
+
+                    if (!Response.Equals(""))
+                    {
+                        author.LastName = Response;
+                    }
+
+                    Console.Write("Date of Birth (" + author.Dob + "): ");
+                    Response = Console.ReadLine();
+
+                    if (!Response.Equals(""))
+                    {
+                        author.Dob = DateTime.Parse(Response);
+                    }
+
+
+
+                    db.SaveChanges();
+                    Console.WriteLine("Successfully edited \"" + authorToEdit.FirstName + "\" (" + authorToEdit.LastName + ")");
+                    break;
+                }
+            }
         }
 
         static void DeleteBookFromDatabase(TBMContext db)
@@ -389,7 +521,7 @@ namespace Proposal1
             {
                 number = 1;
                 Console.WriteLine("\nSelect a book from the list to remove:");
-                foreach (Book book in GetListOfBooks(db))
+                foreach (Book book in booksList)
                 {
                     Console.WriteLine(String.Format("{0,3}", number++.ToString()) + ": \"" + book.Title + "\" (" + book.Isbn13 + ")");
                 }
@@ -409,57 +541,21 @@ namespace Proposal1
 
             Book bookToRemove = booksList[input - 1];
 
-            foreach (Book book1 in GetListOfBooks(db))
+            foreach (Book book1 in booksList)
             {
                 if (book1.Isbn13 == bookToRemove.Isbn13)
                 {
                     db.Remove(bookToRemove);
                     db.SaveChanges();
-                    Console.WriteLine("Successfully deleted" + bookToRemove.Title + "\" (" + bookToRemove.Isbn13 + ")");
+                    Console.WriteLine("Successfully deleted \"" + bookToRemove.Title + "\" (" + bookToRemove.Isbn13 + ")");
                 }
             }
         }
 
         static void DeleteAuthorFromDatabase(TBMContext db)
         {
-            List<Author> authorsList = GetListOfAuthors(db);
-            int number;
-            int input;
 
-            do
-            {
-                number = 1;
-                Console.WriteLine("\nSelect an author from the list to remove:");
-                foreach (Author author in GetListOfAuthors(db))
-                {
-                    Console.WriteLine(String.Format("{0,3}", number++.ToString()) + ": \"" + author.FirstName + "\"" + author.LastName);
-                }
-                Console.Write("  > ");
-
-                try
-                {
-                    input = int.Parse(Console.ReadLine().ToString());
-                }
-                catch (Exception)
-                {
-                    input = -1;
-                    Console.WriteLine("Error: Invalid option entered, please try again...");
-                }
-
-            } while (input < 1 || input > authorsList.Count);
-
-            Author authorToRemove = authorsList[input - 1];
-
-            foreach (Author author1 in GetListOfAuthors(db))
-            {
-                if (author1.FirstName == authorToRemove.FirstName && author1.LastName == authorToRemove.LastName)
-                {
-                    db.Remove(authorToRemove);
-                    db.SaveChanges();
-                    Console.WriteLine("Successfully deleted" + authorToRemove.FirstName + "\"" + authorToRemove.LastName);
-                }
-            }
-    }
+        }
 
         static List<Book> GetListOfBooks(TBMContext db)
         {
@@ -504,10 +600,10 @@ namespace Proposal1
             foreach (var item in db.Stores.ToList())
             {
                 list.Add(item);
-                }
-
-                return list;
             }
+
+            return list;
+        }
 
         static List<StockBalance> GetStockBalances(TBMContext db)
         {
@@ -523,6 +619,7 @@ namespace Proposal1
         static List<Author> GetListOfAuthors(TBMContext db)
         {
             List<Author> list = new List<Author>();
+
             foreach (var item in db.Authors.ToList())
             {
                 list.Add(item);
@@ -530,6 +627,7 @@ namespace Proposal1
             return list;
         }
     }
+}
 }
 
 
