@@ -17,7 +17,7 @@ namespace Proposal1
         {
         }
 
-        public virtual DbSet<Book> Authors { get; set; }
+        public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<Book> Books { get; set; }
         public virtual DbSet<BookReturn> BookReturns { get; set; }
         public virtual DbSet<BookSale> BookSales { get; set; }
@@ -38,9 +38,9 @@ namespace Proposal1
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Latin1_General_CI_AS");
 
-            modelBuilder.Entity<Book>(entity =>
+            modelBuilder.Entity<Author>(entity =>
             {
-                entity.ToTable("Book");
+                entity.ToTable("Author");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -197,9 +197,9 @@ namespace Proposal1
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Isbnauthor>((Action<Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Isbnauthor>>)(entity =>
+            modelBuilder.Entity<Isbnauthor>(entity =>
             {
-                entity.HasKey(e => (new { e.Isbn, e.AuthorId }))
+                entity.HasKey(e => new { e.Isbn, e.AuthorId })
                     .HasName("PK_Lab2ISBNAuthors_1");
 
                 entity.ToTable("ISBNAuthors");
@@ -209,17 +209,17 @@ namespace Proposal1
                 entity.Property(e => e.AuthorId).HasColumnName("AuthorID");
 
                 entity.HasOne(d => d.Author)
-                    .WithMany((System.Linq.Expressions.Expression<Func<Book, System.Collections.Generic.IEnumerable<Isbnauthor>>>)(p => (System.Collections.Generic.IEnumerable<Isbnauthor>)p.Isbnauthors))
+                    .WithMany(p => p.Isbnauthors)
                     .HasForeignKey(d => d.AuthorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ISBNAuthors_Author");
 
                 entity.HasOne(d => d.IsbnNavigation)
-                    .WithMany((System.Linq.Expressions.Expression<Func<Book, System.Collections.Generic.IEnumerable<Isbnauthor>>>)(p => (System.Collections.Generic.IEnumerable<Isbnauthor>)p.Isbnauthors))
+                    .WithMany(p => p.Isbnauthors)
                     .HasForeignKey(d => d.Isbn)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ISBNAuthors_Books");
-            }));
+            });
 
             modelBuilder.Entity<Order>(entity =>
             {

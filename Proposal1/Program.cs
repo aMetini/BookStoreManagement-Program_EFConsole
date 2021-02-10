@@ -76,11 +76,11 @@ namespace Proposal1
             Console.WriteLine("  4: Add Book to Store's Stock Balance");
             Console.WriteLine("  5: Remove Book from Store's Stock Balance");
             Console.WriteLine("  6: Add New Book to Database");
-            Console.WriteLine("  7: Add New Book to Database");
+            Console.WriteLine("  7: Add New Author to Database");
             Console.WriteLine("  8: Edit Existing Book Details in Database");
-            Console.WriteLine("  9: Edit Existing Book Details in Database");
+            Console.WriteLine("  9: Edit Existing Author Details in Database");
             Console.WriteLine(" 10: Delete Existing Book from Database");
-            Console.WriteLine(" 11: Delete Existing Book from Database");
+            Console.WriteLine(" 11: Delete Existing Author from Database");
             Console.Write("  > ");
         }
 
@@ -302,6 +302,7 @@ namespace Proposal1
                 }
             }
 
+        }
 
         static void AddNewBookToDatabase(TBMContext db)
         {
@@ -628,9 +629,3 @@ namespace Proposal1
         }
     }
 }
-}
-
-
-
-
-
