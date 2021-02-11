@@ -477,7 +477,7 @@ namespace Proposal1
                 if (author.FirstName == authorToEdit.FirstName)
                 {
                     string[] PrintMessages = new string[] { "Please add First Name: ", "Please add Last Name: ", "Please add Date of Birth: " };
-                    Console.WriteLine("Enter new values or press 'Enter' to skip over and existing value...");
+                    Console.WriteLine("Enter new values or press 'Enter' to skip over an existing value...");
 
                     Console.Write("First Name (" + author.FirstName + "): ");
                     string Response = Console.ReadLine();
@@ -555,6 +555,43 @@ namespace Proposal1
 
         static void DeleteAuthorFromDatabase(TBMContext db)
         {
+            List<Author> authorsList = GetListOfAuthors(db);
+            int number;
+            int input;
+
+            do
+            {
+                number = 1;
+                Console.WriteLine("\nSelect an author from the list to remove:");
+                foreach (Author author in authorsList)
+                {
+                    Console.WriteLine(String.Format("{0,3}", number++.ToString()) + ": \"" + author.FirstName + author.LastName + "\" (" + author.Dob + ")");
+                }
+                Console.Write("  > ");
+
+                try
+                {
+                    input = int.Parse(Console.ReadLine().ToString());
+                }
+                catch (Exception)
+                {
+                    input = -1;
+                    Console.WriteLine("Error: Invalid option entered, please try again...");
+                }
+
+            } while (input < 1 || input > authorsList.Count);
+
+            Author authorToRemove = authorsList[input - 1];
+
+            foreach (Author author1 in authorsList)
+            {
+                if (author1.FirstName == authorToRemove.FirstName && author1.LastName == authorToRemove.LastName)
+                {
+                    db.Remove(authorToRemove);
+                    db.SaveChanges();
+                    Console.WriteLine("Successfully deleted \"" + authorToRemove.FirstName + "\" (" + authorToRemove.LastName + "\" (" + authorToRemove.Dob + ")");
+                }
+            }
 
         }
 
