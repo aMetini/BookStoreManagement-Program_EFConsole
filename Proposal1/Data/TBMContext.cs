@@ -31,7 +31,7 @@ namespace Proposal1
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-FDAGJGE\\MSSQLSERVER01;Database=TBM;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-EMRMARH;Database=TBM;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
